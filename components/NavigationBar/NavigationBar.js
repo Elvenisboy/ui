@@ -16,6 +16,8 @@ import { connectAnimation } from '@shoutem/animation';
 
 import composeChildren from './composeChildren';
 
+import Device from '../../helpers/device-selector'
+
 function getBackgroundColor(style) {
   const styleWithBg = _.find(style, (styleDef) =>
     styleDef.backgroundColor && styleDef.backgroundColor !== 'transparent'
@@ -23,23 +25,22 @@ function getBackgroundColor(style) {
 
   return styleWithBg && styleWithBg.backgroundColor || 'transparent';
 }
-
 function setStatusBarStyle(backgroundColor) {
   function chooseBarStyle(bgColor) {
     return color(bgColor).isDark() ? 'light-content' : 'default';
   }
 
   function setStyle(bgColor) {
-    const { statusBarColor } = this.props;
+    const { statusBarColor } = this.props ? this.props : { statusBarColor: bgColor };
 
-    const color = statusBarColor || bgColor;
+    const color = statusBarColor
 
     if (Platform.OS === 'android') {
       StatusBar.setBackgroundColor('rgba(0, 0, 0, 0.2)');
     } else {
       const barStyle = chooseBarStyle(color);
       StatusBar.setBarStyle(barStyle);
-    }
+    } 
   }
 
   // This is little bit hacky, but is the only way
@@ -80,7 +81,6 @@ class NavigationBar extends Component {
       default: null,
     });
   }
-
   render() {
     const {
       leftComponent,
